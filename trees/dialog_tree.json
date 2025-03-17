@@ -53,7 +53,8 @@
     },
     "representante": {
         "mensaje": "Te pondremos en contacto con un representante. Por favor, espera...",
-        "representante": true
+        "representante": true,
+        "final": true
     },
     "horarios": {
         "mensaje": "Atendemos de Lunes a Viernes de 9 AM a 6 PM.",
