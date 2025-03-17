@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentación del Bot de WhatsApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        pre {
+            background-color: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Documentación del Bot de WhatsApp</h1>
+        <p class="text-muted text-center">Este documento explica el funcionamiento del bot de WhatsApp basado en whatsapp-web.js</p>
+        
+        <h2>1. Configuración Inicial</h2>
+        <p>Se importan las librerías necesarias para el funcionamiento del bot:</p>
+        <pre>
+const { Client ,LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
+const fs = require('fs');
+        </pre>
+
+        <h2>2. Creación del Cliente</h2>
+        <p>Se configura el cliente con autenticación local y Puppeteer en modo headless:</p>
+        <pre>
+const client = new Client({
+    authStrategy: new LocalAuth({ clientId: 'EmmaBot' }),
+    puppeteer: { headless: true }
+});
+        </pre>
+
+        <h2>3. Manejo del QR</h2>
+        <p>Se muestra el código QR en la terminal para la autenticación:</p>
+        <pre>
+client.on('qr', (qr) => {
+    console.log('QR RECEIVED', qr);
+    qrcode.generate(qr, {small: true});
+});
+        </pre>
+
+        <h2>4. Confirmación de Conexión</h2>
+        <p>Cuando el bot está listo, se imprime un mensaje en la terminal:</p>
+        <pre>
+client.once('ready', () => {
+    console.log('Client is ready!');
+});
+        </pre>
+
+        <h2>5. Manejo de Mensajes</h2>
+        <p>Se escucha cada mensaje entrante y se procesa según el árbol de conversación:</p>
+        <pre>
+client.on('message', async message => {
+    const chatId = message.from;
+    const text = message.body.trim();
+    
+    if (!userStates[chatId]) {
+        userStates[chatId] = "inicio";
+    }
+
+    const currentNode = conversationTree[userStates[chatId]];
+    if (currentNode.final) {
+        delete userStates[chatId];
+        return;
+    }
+
+    if (currentNode.siguientes && currentNode.siguientes[text]) {
+        userStates[chatId] = currentNode.siguientes[text];
+    }
+
+    const newNode = conversationTree[userStates[chatId]];
+    let response = `*${newNode.mensaje}*\n`;
+    if (newNode.opciones) {
+        for (const [key, value] of Object.entries(newNode.opciones)) {
+            response += `\n${key}. ${value}`;
+        }
+    }
+    
+    await message.reply(response);
+});
+        </pre>
+
+        <h2>6. Inicialización del Cliente</h2>
+        <p>Se inicia el bot con la siguiente línea:</p>
+        <pre>
+client.initialize();
+        </pre>
+
+        <h2>Conclusión</h2>
+        <p>Este bot permite gestionar un flujo de conversación mediante un archivo JSON, respondiendo dinámicamente a los usuarios según sus elecciones.</p>
+    </div>
+</body>
+</html>

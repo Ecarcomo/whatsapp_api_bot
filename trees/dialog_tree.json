@@ -1,0 +1,75 @@
+{
+    "inicio": {
+        "mensaje": "Hola, ¿qué necesitas?",
+        "opciones": {
+            "1": "Información sobre nuestros productos",
+            "2": "Hablar con un representante",
+            "3": "Horarios de atención"
+        },
+        "siguientes": {
+            "1": "productos",
+            "2": "representante",
+            "3": "horarios"
+        }
+    },
+    "productos": {
+        "mensaje": "Ofrecemos computadoras y celulares. ¿Cuál te interesa?",
+        "opciones": {
+            "1": "Computadoras",
+            "2": "Celulares",
+            "3": "Volver al inicio"
+        },
+        "siguientes": {
+            "1": "computadoras",
+            "2": "celulares",
+            "3": "inicio"
+        }
+    },
+    "computadoras": {
+        "mensaje": "Tenemos laptops y PC de escritorio. ¿Qué buscas?",
+        "opciones": {
+            "1": "Laptops",
+            "2": "PC de escritorio",
+            "3": "Volver"
+        },
+        "siguientes": {
+            "1": "laptops",
+            "2": "pc_escritorio",
+            "3": "productos"
+        }
+    },
+    "celulares": {
+        "mensaje": "Tenemos SmartPhone. ¿Qué buscas?",
+        "opciones": {
+            "1": "IOS",
+            "2": "Android",
+            "3": "Volver"
+        },
+        "siguientes": {
+            "1": "ios",
+            "2": "android",
+            "3": "productos"
+        }
+    },
+    "representante": {
+        "mensaje": "Te pondremos en contacto con un representante. Por favor, espera...",
+        "representante": true
+    },
+    "horarios": {
+        "mensaje": "Atendemos de Lunes a Viernes de 9 AM a 6 PM.",
+        "opciones": {
+            "1": "Volver al inicio",
+            "2": "Finalizar conversación"
+        }
+        ,
+        "siguientes": {
+            "1": "inicio",
+            "2": "fin"
+        }
+    },
+    "fin": {
+        "mensaje": "Gracias por contactarnos!",
+        "final": true
+    }
+
+}
