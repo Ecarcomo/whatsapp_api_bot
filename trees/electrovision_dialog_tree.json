@@ -1,0 +1,164 @@
+{
+    "inicio": {
+        "mensaje": "¡Hola! 😊 Bienvenido a Electrovision. Somos tu mejor opción en servicio técnico y venta de repuestos para SmartTVs.\nPodes encontrar toda nuestra info en https://electrovision.com.ar 🌐\n\n *¿En qué podemos ayudarte hoy?* 📺🔧",
+        "opciones": {
+            "1": "Servicio técnico",
+            "2": "Venta de repuestos",
+            "3": "Hablar con un representante",
+            "4": "Horarios de atención"
+        },
+        "siguientes": {
+            "1": "servicio_tecnico",
+            "2": "venta_repuestos",
+            "3": "representante",
+            "4": "horarios"
+        },
+        "funciones": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": ""
+        }
+    },
+    "servicio_tecnico": {
+        "mensaje": "*Contamos con taller y laboratorio propios. Puedes traer tu televisor al taller o coordinar un retiro/entrega a domicilio. ¿Qué prefieres?*",
+        "opciones": {
+            "1": "Llevar al taller",
+            "2": "Retiro/entrega a domicilio",
+            "3": "Volver"
+        },
+        "siguientes": {
+            "1": "llevar_taller",
+            "2": "retiro_domicilio",
+            "3": "inicio"
+        },
+        "funciones": {
+            "1": "",
+            "2": "",
+            "3": ""
+        }
+    },
+    "venta_repuestos": {
+        "mensaje": "Ofrecemos repuestos para SmartTVs al gremio. ¿Qué tipo de repuesto necesitas?",
+        "opciones": {
+            "1": "Pantallas",
+            "2": "Placas base",
+            "3": "Otros",
+            "4": "Volver"
+        },
+        "siguientes": {
+            "1": "pantallas",
+            "2": "placas_base",
+            "3": "otros_repuestos",
+            "4": "inicio"
+        },
+        "funciones": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": ""
+        }
+    },
+    "llevar_taller": {
+        "mensaje": "Puedes traer tu televisor a nuestro taller en Bernal Oeste en cualquier momento durante nuestros horarios de atención de Lunes a Viernes de 9 AM a 6 PM..",
+        "opciones": {
+            "1": "Volver al inicio",
+            "2": "Hablar con un representante",
+            "3": "Finalizar conversación"
+        },
+        "siguientes": {
+            "1": "inicio",
+            "2": "representante",
+            "3": "fin"
+        },
+        "funciones": {
+            "1": "",
+            "2": "",
+            "3": ""
+        }
+    },
+    "retiro_domicilio": {
+        "mensaje": "Coordina el retiro y entrega a domicilio llamando a nuestro número de contacto.",
+        "opciones": {
+            "1": "Volver al inicio",
+            "2": "Finalizar conversación"
+        },
+        "siguientes": {
+            "1": "inicio",
+            "2": "fin"
+        },
+        "funciones": {
+            "1": "",
+            "2": ""
+        }
+    },
+    "pantallas": {
+        "mensaje": "Ofrecemos pantallas de diferentes marcas y modelos. Para más información, contacta con un representante.",
+        "opciones": {
+            "1": "Volver",
+            "2": "Hablar con un representante"
+        },
+        "siguientes": {
+            "1": "venta_repuestos",
+            "2": "representante"
+        },
+        "funciones": {
+            "1": "",
+            "2": ""
+        }
+    },
+    "placas_base": {
+        "mensaje": "Disponemos de placas base para varias marcas de SmartTVs. Para más detalles, contacta con un representante.",
+        "opciones": {
+            "1": "Volver",
+            "2": "Hablar con un representante"
+        },
+        "siguientes": {
+            "1": "venta_repuestos",
+            "2": "representante"
+        },
+        "funciones": {
+            "1": "",
+            "2": ""
+        }
+    },
+    "otros_repuestos": {
+        "mensaje": "Para otros tipos de repuestos, por favor contacta con un representante.",
+        "opciones": {
+            "1": "Volver",
+            "2": "Hablar con un representante"
+        },
+        "siguientes": {
+            "1": "venta_repuestos",
+            "2": "representante"
+        },
+        "funciones": {
+            "1": "",
+            "2": ""
+        }
+    },
+    "representante": {
+        "mensaje": "Te pondremos en contacto con un representante. Por favor, espera...",
+        "representante": true,
+        "final": true
+    },
+    "horarios": {
+        "mensaje": "Atendemos de Lunes a Viernes de 9 AM a 6 PM.",
+        "opciones": {
+            "1": "Volver al inicio",
+            "2": "Finalizar conversación"
+        },
+        "siguientes": {
+            "1": "inicio",
+            "2": "fin"
+        },
+        "funciones": {
+            "1": "",
+            "2": ""
+        }
+    },
+    "fin": {
+        "mensaje": "Gracias por contactarnos!!\nSi te gustó nuestra atención te invitamos a déjanos una breve reseña en el siguiente enlace: https://search.google.com/local/writereview?placeid=ChIJL_VqyZgto5URtgQP7QcxYyM 🌟",
+        "final": true
+    }
+}

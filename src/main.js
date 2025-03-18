@@ -3,7 +3,7 @@ const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 
 // Load the dialog tree
-const conversationTree = JSON.parse(fs.readFileSync('./trees/dialog_tree.json', 'utf8'));
+const conversationTree = JSON.parse(fs.readFileSync('./trees/electrovision_dialog_tree.json', 'utf8'));
 // Load the user states
 const userStates = {};
 // Número del representante con código de país
@@ -44,65 +44,76 @@ client.on('message_create', async message => {
         let inichat = false;
         let noValid = '';
 
-        console.log(`Received message from ${chatId}: ${text}`);
+        //console.log(`Received message from ${chatId}: ${text}`);
 
-        if (!chatId.includes('5551642209')) {
+        if (!chatId.includes('5551642209') && !chatId.includes('60941390') && !chatId.includes('64267883')) {
             return;
         }
 
         if (!userStates[chatId]) {
-            userStates[chatId] = "inicio";
+            userStates[chatId] = { state: "inicio", lastmsj: Date.now().toString() ,data:{}};
             inichat = true;
         } else {
             inichat = false;
         }
 
-        if (text) {
-            console.log('Nodo Actual: ' + userStates[chatId]);
+        
+
+        /*if (text) {
+            console.log('Nodo Actual: ' + userStates[chatId].state);
             console.log(`[${chatId}] -> "${text}"`);
             console.log('-----------------------------------');
         } else {
             console.log('Message body is empty or null');
-        }
+        }*/
+        // Actualizar date de último mensaje
+        userStates[chatId].lastmsj = Date.now().toString();
 
-        const currentNode = conversationTree[userStates[chatId]];
 
+        const currentNode = conversationTree[userStates[chatId].state];
+
+        // Validaciones de flujo de la conversación
         if (currentNode) {
+
             if (currentNode.representante) {
-                return;
             }
-
-            if (currentNode.final) {
+            else if (currentNode.final) {
                 delete userStates[chatId]; // Reiniciar conversación después de un nodo final
-                return;
             }
-
-            if (currentNode.siguientes) {
+            else if (currentNode.siguientes) {
                 if (currentNode.siguientes[text]) {
                     if (conversationTree[currentNode.siguientes[text]]) {
-                        if (!inichat) userStates[chatId] = currentNode.siguientes[text];
+                        if (!inichat) userStates[chatId].state = currentNode.siguientes[text];
                     } else {
                         noValid = 'Lo siento, ha ocurrido un error';
                     }
                 } else {
-                    if (userStates[chatId] !== "inicio") {
+                    if (userStates[chatId].state !== "inicio") {
                         noValid = 'Opción no válida, por favor intenta de nuevo';
-                    } else if ((userStates[chatId] === "inicio" && !inichat)) {
+                    } else if ((userStates[chatId].state === "inicio" && !inichat)) {
                         noValid = 'Opción no válida, por favor intenta de nuevo';
                     }
                 }
             }
         }
 
-        const newNode = conversationTree[userStates[chatId]];
+        console.log(chatId,userStates[chatId]);
+        console.log('-----------------------------------');
 
+        if (currentNode.representante || currentNode.final) {
+            return;
+        }
+
+        //Nuevo nodo de la conversación
+        const newNode = conversationTree[userStates[chatId].state];
+        //Si el nodo tiene representante, enviar mensaje al representante
         if (newNode.representante) {
-            await client.sendMessage(representanteId, `📢 *Nueva solicitud de atención* 📢\n\nEnlace: https://wa.me/${chatId.replace('@c.us', '')}\nMensaje: "${text}"`);
+            await client.sendMessage(representanteId, `📢 *Nueva solicitud de atención* 📢\n\nEnlace: https://wa.me/${chatId.replace('@c.us', '')}`);
         }
 
         let response = (noValid !== '' ?
-            `\`\`\`${noValid}\`\`\`\n\n*${newNode.mensaje}*\n` :
-            `*${newNode.mensaje}*\n`
+            `\`\`\`${noValid}\`\`\`\n\n${newNode.mensaje}\n` :
+            `${newNode.mensaje}\n`
         );
 
         if (newNode.opciones) {
@@ -111,7 +122,7 @@ client.on('message_create', async message => {
             }
         }
 
-        await message.reply(response);
+        await client.sendMessage(chatId,response);
     } catch (error) {
         console.error('Error processing message:', error);
     }
@@ -120,20 +131,44 @@ client.on('message_create', async message => {
 
 // Listen for messages from the representative
 client.on('message_create', async message => {
-    if (message.from === representanteId) {
-        const text = message.body.trim().toLowerCase();
+    try {
+        if (message.from === representanteId) {
+            const text = message.body.trim().toLowerCase();
 
-        // Check if the message contains "adios" or "hasta luego"
-        if (text.startsWith('adios') || text.startsWith('hasta luego')) {
-            const chatIdToReset = message.to;
-            if (userStates[chatIdToReset]) {
-                await client.sendMessage(chatIdToReset, 'Gracias por contactarnos. Por favor, déjanos una reseña en el siguiente enlace: [enlace de reseñas]');
-                delete userStates[chatIdToReset];
-                await message.reply(`Se ha finalizado la conversación.`);
+            // Check if the message contains "adios" or "hasta luego"
+            if (text.startsWith('adios') || text.startsWith('hasta luego')) {
+                const chatIdToReset = message.to;
+                if (userStates[chatIdToReset]) {
+                    userStates[chatIdToReset].state = 'fin';
+                    const msg = conversationTree[userStates[chatIdToReset].state].mensaje;
+                    await client.sendMessage(chatIdToReset, msg);
+                    delete userStates[chatIdToReset];
+                    await client.sendMessage(chatIdToReset, `\`\`\`Se ha finalizado la conversación.\`\`\``);
+                }
             }
         }
+    } catch (error) {
+        console.error('Error processing representative message:', error);
     }
 });
+
+
+// Function to clean up old user states
+async function cleanUpUserStates() {
+    const now = Date.now();
+    const THIRTY_MINUTES = 30 * 60 * 1000;
+
+    for (const chatId in userStates) {
+        if (now - parseInt(userStates[chatId].lastmsj) > THIRTY_MINUTES) {
+            delete userStates[chatId];
+            console.log(`Estado del usuario ${chatId} eliminado por inactividad.`);
+            await client.sendMessage(chatId, `\`\`\`Se cierra la conversación por inactividad. Si necesitas ayuda, por favor vuelve a escribirnos.\`\`\``);
+        }
+    }
+}
+
+// Set an interval to clean up old user states every hour
+setInterval(cleanUpUserStates, 60 * 60 * 1000);
 
 
 // Start your client
