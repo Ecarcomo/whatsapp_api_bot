@@ -28,7 +28,7 @@ client.once('ready', () => {
 });
 
 // Listening to all incoming messages
-client.on('message', async message => {
+client.on('message_create', async message => {
     try {
         const chatId = message.from;
         let text = message.body ? message.body.trim() : '';
@@ -46,7 +46,7 @@ client.on('message', async message => {
 
         console.log(`Received message from ${chatId}: ${text}`);
 
-        if (!chatId.includes('60941390')) {
+        if (!chatId.includes('5551642209')) {
             return;
         }
 
@@ -116,6 +116,25 @@ client.on('message', async message => {
         console.error('Error processing message:', error);
     }
 });
+
+
+// Listen for messages from the representative
+client.on('message_create', async message => {
+    if (message.from === representanteId) {
+        const text = message.body.trim().toLowerCase();
+
+        // Check if the message contains "adios" or "hasta luego"
+        if (text.startsWith('adios') || text.startsWith('hasta luego')) {
+            const chatIdToReset = message.to;
+            if (userStates[chatIdToReset]) {
+                await client.sendMessage(chatIdToReset, 'Gracias por contactarnos. Por favor, déjanos una reseña en el siguiente enlace: [enlace de reseñas]');
+                delete userStates[chatIdToReset];
+                await message.reply(`Se ha finalizado la conversación.`);
+            }
+        }
+    }
+});
+
 
 // Start your client
 client.initialize();
