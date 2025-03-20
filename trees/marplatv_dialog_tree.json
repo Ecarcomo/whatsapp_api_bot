@@ -1,6 +1,6 @@
 {
     "inicio": {
-        "mensaje": "¡Hola! 😊 Bienvenido a *Electrovision*. Somos tu mejor opción en servicio técnico y venta de repuestos para SmartTVs.\nPodes encontrar toda nuestra info en https://electrovision.com.ar 🌐\n\n *¿En qué podemos ayudarte hoy?* 📺🔧",
+        "mensaje": "¡Hola! 😊 Bienvenido a Electrovision. Somos tu mejor opción en servicio técnico y venta de repuestos para SmartTVs.\nPodes encontrar toda nuestra info en https://electrovision.com.ar 🌐\n\n *¿En qué podemos ayudarte hoy?* 📺🔧",
         "opciones": {
             "1": "Servicio técnico",
             "2": "Venta de repuestos",
@@ -39,7 +39,7 @@
         }
     },
     "venta_repuestos": {
-        "mensaje": "*Ofrecemos repuestos para SmartTVs al gremio.* ¿Qué tipo de repuesto necesitas?",
+        "mensaje": "Ofrecemos repuestos para SmartTVs al gremio. ¿Qué tipo de repuesto necesitas?",
         "opciones": {
             "1": "Pantallas",
             "2": "Placas base",
@@ -60,7 +60,7 @@
         }
     },
     "llevar_taller": {
-        "mensaje": "Puedes traer tu televisor a nuestro taller en *Bernal Oeste , Calle 179 al 148* en cualquier momento durante nuestros horarios de atención de Lunes a Viernes de 9 AM a 6 PM..",
+        "mensaje": "Puedes traer tu televisor a nuestro taller en Bernal Oeste en cualquier momento durante nuestros horarios de atención de Lunes a Viernes de 9 AM a 6 PM..",
         "opciones": {
             "1": "Volver al inicio",
             "2": "Hablar con un representante",
@@ -78,7 +78,7 @@
         }
     },
     "retiro_domicilio": {
-        "mensaje": "*Coordina el retiro y entrega a domicilio llamando a nuestro número de contacto.*",
+        "mensaje": "Coordina el retiro y entrega a domicilio llamando a nuestro número de contacto.",
         "opciones": {
             "1": "Volver al inicio",
             "2": "Finalizar conversación"
@@ -93,7 +93,7 @@
         }
     },
     "pantallas": {
-        "mensaje": "*Ofrecemos pantallas de diferentes marcas y modelos. Para más información, contacta con un representante.*",
+        "mensaje": "Ofrecemos pantallas de diferentes marcas y modelos. Para más información, contacta con un representante.",
         "opciones": {
             "1": "Volver",
             "2": "Hablar con un representante"
@@ -108,7 +108,7 @@
         }
     },
     "placas_base": {
-        "mensaje": "*Disponemos de placas base para varias marcas de SmartTVs. Para más detalles, contacta con un representante.*",
+        "mensaje": "Disponemos de placas base para varias marcas de SmartTVs. Para más detalles, contacta con un representante.",
         "opciones": {
             "1": "Volver",
             "2": "Hablar con un representante"
@@ -123,7 +123,7 @@
         }
     },
     "otros_repuestos": {
-        "mensaje": "*Para otros tipos de repuestos, por favor contacta con un representante.*",
+        "mensaje": "Para otros tipos de repuestos, por favor contacta con un representante.",
         "opciones": {
             "1": "Volver",
             "2": "Hablar con un representante"
@@ -143,7 +143,7 @@
         "final": true
     },
     "horarios": {
-        "mensaje": "*Atendemos de Lunes a Viernes de 9 AM a 6 PM.*",
+        "mensaje": "Atendemos de Lunes a Viernes de 9 AM a 6 PM.",
         "opciones": {
             "1": "Volver al inicio",
             "2": "Finalizar conversación"
@@ -158,7 +158,7 @@
         }
     },
     "fin": {
-        "mensaje": "*Gracias por contactarnos!!*\nSi te gustó nuestra atención te invitamos a déjanos una breve reseña en el siguiente enlace:\n https://search.google.com/local/writereview?placeid=ChIJL_VqyZgto5URtgQP7QcxYyM 🌟",
+        "mensaje": "Gracias por contactarnos!!\nSi te gustó nuestra atención te invitamos a déjanos una breve reseña en el siguiente enlace: https://search.google.com/local/writereview?placeid=ChIJL_VqyZgto5URtgQP7QcxYyM 🌟",
         "final": true
     }
 }
