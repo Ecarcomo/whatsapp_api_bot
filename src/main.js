@@ -28,6 +28,7 @@ app.get('/startBot', async (req, res) => {
     }
 });
 
+//ejemplo : http://localhost:3030/closeBot?nameBot=electrovision
 app.get('/closeBot', async (req, res) => {
     try {
         const nameBot = req.query.nameBot;
@@ -40,6 +41,7 @@ app.get('/closeBot', async (req, res) => {
         }
         await bot.stop();
         delete bots[nameBot];
+        console.log('Bot closed successfully');
         res.status(200).send('Bot closed successfully');
     } catch (error) {
         res.status(500).send(`Error closing bot: ${error.message}`);

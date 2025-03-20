@@ -134,10 +134,8 @@ class Bot {
         this.client.on('message_create', async message => {
             try {
                 if (message.from === representanteId) {
-                    const text = message.body.trim().toLowerCase();
-
-                    // Check if the message contains "adios" or "hasta luego"
-                    if (text.startsWith('adios') || text.startsWith('hasta luego')) {
+                    // Check if the representative is saying goodbye
+                    if (this.despedidaRepresentante(message.body)) {
                         const chatIdToReset = message.to;
                         if (this.userStates[chatIdToReset]) {
                             this.userStates[chatIdToReset].state = 'fin';
@@ -152,7 +150,10 @@ class Bot {
                 console.error('Error processing representative message:', error);
             }
         });
-    
+        
+        this.client.on('disconnected', (reason) => {
+            console.log(`Bot ${this.nameBot} was logged out`, reason);
+        });
     }
 
     destructor() {
@@ -160,9 +161,8 @@ class Bot {
     }
 
     stop(){
-        // Add destructor logic here if needed
         this.client.logout();
-        this.client.destroy();
+        //this.client.destroy();
     }
     // Function to clean up old user states
     async cleanUpUserStates() {
@@ -176,6 +176,16 @@ class Bot {
                 await this.client.sendMessage(chatId, `\`\`\`Se cierra la conversación por inactividad. Si necesitas ayuda, por favor vuelve a escribirnos.\`\`\``);
             }
         }
+    }
+
+    // Function to check if the user is saying goodbye
+    despedidaRepresentante(text) {
+        const txt = text.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Add representative farewell logic here if needed
+        if (txt.startsWith('adios') || txt.includes('hasta luego') || txt.includes('chau')) {
+            return true;
+        }
+        return false;
     }
 
     validarTexto(text) {
