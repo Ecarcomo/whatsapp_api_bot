@@ -26,6 +26,8 @@ class Bot {
         // When the client is ready, run this code (only once)
         this.client.once('ready', () => {
             console.log(`BOT ${this.nameBot} is ready!`);
+            // Set an interval to execute the cleanUpUserStates function every 1 minute
+            setInterval(()=>this.cleanUpUserStates(), 1 * 60 * 1000);
         });
 
         // Listening to all incoming messages
@@ -152,7 +154,11 @@ class Bot {
         });
         
         this.client.on('disconnected', (reason) => {
-            console.log(`Bot ${this.nameBot} was logged out`, reason);
+            try {
+                console.log(`Bot ${this.nameBot} was logged out`, reason);
+            } catch (error) {
+                console.error('Error during disconnection:', error);
+            }
         });
     }
 
@@ -166,15 +172,20 @@ class Bot {
     }
     // Function to clean up old user states
     async cleanUpUserStates() {
-        await this.client.sendMessage(chatId, `\`\`\`Se cierra la conversación por inactividad. Si necesitas ayuda, por favor vuelve a escribirnos.\`\`\``);
-        const THIRTY_MINUTES = 30 * 60 * 1000;
-
-        for (const chatId in this.userStates) {
+        try {
+            // Clean up user states that have been inactive for more than 30 minutes
+            const THIRTY_MINUTES = 30 * 60 * 1000;
+            const now = Date.now();
+            
+            for (const chatId in this.userStates) {
             if (now - parseInt(this.userStates[chatId].lastmsj) > THIRTY_MINUTES) {
-                delete userStates[chatId];
+                delete this.userStates[chatId];
                 console.log(`Estado del usuario ${chatId} eliminado por inactividad.`);
                 await this.client.sendMessage(chatId, `\`\`\`Se cierra la conversación por inactividad. Si necesitas ayuda, por favor vuelve a escribirnos.\`\`\``);
             }
+            }
+        } catch (error) {
+            console.error('Error during user state cleanup:', error);
         }
     }
 
@@ -198,8 +209,6 @@ class Bot {
     // Start your client
     start(){
         this.client.initialize();
-        // Set an interval to clean up old user states every hour
-        setInterval(()=>this.cleanUpUserStates(), 60 * 60 * 1000);
     }
 
 }
