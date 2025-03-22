@@ -2,6 +2,8 @@
 import qrcode from 'qrcode-terminal';
 import fs from 'fs';
 import pkg from 'whatsapp-web.js';
+import  userStatesController  from './configDB/controllers.js';
+const   usDB = userStatesController;
 const { Client, LocalAuth } = pkg;
 
 
@@ -28,6 +30,11 @@ class Bot {
             console.log(`BOT ${this.nameBot} is ready!`);
             // Set an interval to execute the cleanUpUserStates function every 1 minute
             setInterval(()=>this.cleanUpUserStates(), 1 * 60 * 1000);
+            // Set an interval to execute the uploadUserStates function every 1 minute
+            setInterval(()=>this.uploadUserStates(), 1 * 60 * 1000);
+            this.uploadUserStates();
+
+
         });
 
         // Listening to all incoming messages
@@ -188,6 +195,18 @@ class Bot {
             console.error('Error during user state cleanup:', error);
         }
     }
+
+    //Function to upload userStates array to the database
+    async uploadUserStates() {
+        try {
+            // Upload user states to the database
+            await usDB.update({nameBot: this.nameBot, userStates: this.userStates});
+            console.log(`(Bot: ${nameBot}) User states uploaded successfully`);
+        } catch (error) {
+            console.error(`(Bot:  ${nameBot}) Error uploading user states:`, error);
+        }
+    }
+
 
     // Function to check if the user is saying goodbye
     despedidaRepresentante(text) {
