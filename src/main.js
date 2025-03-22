@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Bot from './botClass.js';
 import express from 'express';
 import bodyParser from 'body-parser';
