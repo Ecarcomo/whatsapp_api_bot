@@ -72,7 +72,6 @@ app.get('/deleteBot', async (req, res) => {
         if (!bot) {
             return res.status(400).send('Bot not found');
         }
-        await bot.stop();
         delete bots[nameBot];
         console.log('Bot deleted successfully');
         res.status(200).send('Bot deleted successfully');
