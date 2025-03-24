@@ -2,22 +2,25 @@
 import qrcode from 'qrcode-terminal';
 import fs from 'fs';
 import pkg from 'whatsapp-web.js';
-import  userStatesController  from './configDB/controllers.js';
-const   usDB = userStatesController;
+import  {dTC}  from './configDB/controllers.js';
+
 const { Client, LocalAuth } = pkg;
 
 
 
 class Bot {
-    constructor(nameBot,representanteId) {
+    constructor(nameBot,representanteId,usersAllowed,usersDenied) {
         this.nameBot = nameBot;
         this.client = new Client({
             authStrategy: new LocalAuth({ clientId:  this.nameBot }),
             puppeteer: { headless: true }
         });
+        this.usersAllowed = usersAllowed;
+        this.usersDenied = usersDenied;
         this.userStates = {};
         this.representanteId = representanteId;
-        this.conversationTree = JSON.parse(fs.readFileSync(`./trees/${this.nameBot}_dialog_tree.json`, 'utf8'));
+        this.conversationTree = {};
+        //this.conversationTree = JSON.parse(fs.readFileSync(`./trees/${this.nameBot}_dialog_tree.json`, 'utf8'));
 
         // When the client received QR-Code
         this.client.on('qr', (qr) => {
@@ -30,11 +33,6 @@ class Bot {
             console.log(`BOT ${this.nameBot} is ready!`);
             // Set an interval to execute the cleanUpUserStates function every 1 minute
             setInterval(()=>this.cleanUpUserStates(), 1 * 60 * 1000);
-            // Set an interval to execute the uploadUserStates function every 1 minute
-            setInterval(()=>this.uploadUserStates(), 1 * 60 * 1000);
-            this.uploadUserStates();
-
-
         });
 
         // Listening to all incoming messages
@@ -54,11 +52,18 @@ class Bot {
                 let inichat = false;
                 let noValid = '';
 
-                //console.log(`Received message from ${chatId}: ${text}`);
-
-                if (!chatId.includes('63522348') && !chatId.includes('60941390') && !chatId.includes('5551642209')) {
+                // Validar si el chatId está en la lista de usuarios permitidos
+                const usersAllowed = this.usersAllowed;
+                if (usersAllowed.length > 0 && !usersAllowed.some(number => chatId.includes(number))) {
                     return;
                 }
+
+                const usersDenied = this.usersDenied;
+                if (usersDenied.length > 0 && usersDenied.some(number => chatId.includes(number))) {
+                    return;
+                }
+
+
 
                 if (!this.userStates[chatId]) {
                     this.userStates[chatId] = { state: "inicio", lastmsj: Date.now().toString() ,data:{}};
@@ -196,14 +201,16 @@ class Bot {
         }
     }
 
-    //Function to upload userStates array to the database
-    async uploadUserStates() {
+    //Function to find the dialog tree
+    async findDialogTree(nameBot) {
         try {
-            // Upload user states to the database
-            await usDB.update({nameBot: this.nameBot, userStates: this.userStates});
-            console.log(`(Bot: ${nameBot}) User states uploaded successfully`);
-        } catch (error) {
-            console.error(`(Bot:  ${nameBot}) Error uploading user states:`, error);
+            const tree = await dTC.getOne(nameBot);
+            if (!tree) {
+                console.log(`Dialog tree for bot "${nameBot}" not found. Please provide a valid dialog tree.`);
+            }
+            return tree.treeWPP;
+         } catch (error) {
+            console.error('Error finding dialog tree:', error);
         }
     }
 
@@ -226,10 +233,48 @@ class Bot {
     }
 
     // Start your client
-    start(){
-        this.client.initialize();
+    async start(){
+        try {
+            this.conversationTree = await this.findDialogTree(this.nameBot);
+            if (!this.conversationTree) {
+                console.log(`No conversation tree found for bot ${this.nameBot}. Destroying bot instance.`);
+                this.destructor();
+                return false;
+            }
+            console.log(`Conversation tree found for ${this.nameBot} bot!`);
+            await this.client.initialize();
+            return true;
+        }
+        catch (error) {
+            console.error('Error starting bot:', error);
+            return false;
+        }
     }
 
+    getInfo(){
+        return {
+            nameBot: this.nameBot,
+            representanteId: this.representanteId,
+            usersAllowed: this.usersAllowed,
+            usersDenied: this.usersDenied,
+            userStates: this.userStates,
+            conversationTree: this.conversationTree
+        };
+    }
+    
+    setRepresentanteId(representanteId){
+        this.representanteId = representanteId;
+    }
+    setUsersAllowed(usersAllowed){
+        this.usersAllowed = usersAllowed;
+    }
+    setUsersDenied(usersDenied){
+        this.usersDenied = usersDenied;
+    }
+
+    updateDT(){
+        this.conversationTree = this.findDialogTree(this.nameBot);
+    }
 }
 
 export default Bot;
