@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import authMiddleware from './auth/authMiddleware.js';
 import Bot from './botClass.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -9,7 +10,8 @@ const port = process.env.PORT || 3030;
 app.use(bodyParser.json());
 const bots = {};
 
-
+// Aplica el middleware de autenticación a todas las rutas
+app.use(authMiddleware);
 
 //ejemplo : http://localhost:3030/startBot?nameBot=electrovision&representanteId=5491137658523@c.us&usuariosPermitidos=5551642209&usuariosExceptuados=1137658523,1133727415
 app.get('/startBot', async (req, res) => {
