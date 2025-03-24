@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import dbClient from "./dbclient.js";
 
-class userStatesModel {
+export class userStatesModel {
     async create(userStates){
         const colletUS = dbClient.db.collection('userStates');
         return await colletUS.insertOne(pedido);
@@ -28,4 +28,31 @@ class userStatesModel {
     }
 }
 
-export default new userStatesModel();
+export class dialogTreeModel {
+    async create(dialogTree){
+        const colletDT = dbClient.db.collection('dialogTree');
+        return await colletDT.insertOne(pedido);
+    }
+
+    async update(id,dialogTree){
+        const colletDT = dbClient.db.collection('dialogTree');
+        return await colletDT.updateOne({_id: new ObjectId(id)},{$set: dialogTree});
+    }
+
+    async delete(id){
+        const colletDT = dbClient.db.collection('dialogTree');
+        return await colletDT.deleteOne({_id: new ObjectId(id)});
+    }
+
+    async getAll(){
+        const colletDT = dbClient.db.collection('dialogTree');
+        return await colletDT.find({}).toArray();
+    }
+
+    async getOne(nameBot){
+        const colletDT = dbClient.db.collection('dialogTree');
+        return await colletDT.findOne({ 'nameBot': nameBot });
+    }
+}
+
+//export default new userStatesModel();
