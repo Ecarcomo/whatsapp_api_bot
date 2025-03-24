@@ -13,7 +13,7 @@ class Bot {
         this.nameBot = nameBot;
         this.client = new Client({
             authStrategy: new LocalAuth({ clientId:  this.nameBot }),
-            puppeteer: { headless: true }
+            puppeteer: { headless: false }
         });
         this.usersAllowed = usersAllowed;
         this.usersDenied = usersDenied;
@@ -178,9 +178,14 @@ class Bot {
         // Add destructor logic here if needed
     }
 
-    stop(){
-        this.client.logout();
-        //this.client.destroy();
+    async stop(){
+        try {
+            await this.client.logout();
+            this.client.destroy();
+        }
+        catch (error) {
+            console.error('Error stopping bot:', error);
+        }
     }
     // Function to clean up old user states
     async cleanUpUserStates() {
