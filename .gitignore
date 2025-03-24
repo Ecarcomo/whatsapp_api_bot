@@ -111,3 +111,6 @@ ehthumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Confidencial Keys files
+serviceAccountKey.json

@@ -3,13 +3,14 @@ import qrcode from 'qrcode-terminal';
 import fs from 'fs';
 import pkg from 'whatsapp-web.js';
 import  {dTC}  from './configDB/controllers.js';
+import admin from './notif/notifFCM.js';
 
 const { Client, LocalAuth } = pkg;
 
 
 
 class Bot {
-    constructor(nameBot,representanteId,usersAllowed,usersDenied) {
+    constructor(nameBot,representanteId,tokenNP,usersAllowed,usersDenied) {
         this.nameBot = nameBot;
         this.client = new Client({
             authStrategy: new LocalAuth({ clientId:  this.nameBot }),
@@ -17,6 +18,7 @@ class Bot {
         });
         this.usersAllowed = usersAllowed;
         this.usersDenied = usersDenied;
+        this.token = tokenNP;
         this.userStates = {};
         this.representanteId = representanteId;
         this.conversationTree = {};
@@ -73,14 +75,6 @@ class Bot {
                 }
 
                 
-
-                /*if (text) {
-                    console.log('Nodo Actual: ' + userStates[chatId].state);
-                    console.log(`[${chatId}] -> "${text}"`);
-                    console.log('-----------------------------------');
-                } else {
-                    console.log('Message body is empty or null');
-                }*/
                 // Actualizar date de último mensaje
                 this.userStates[chatId].lastmsj = Date.now().toString();
 
@@ -112,7 +106,7 @@ class Bot {
                     }
                 }
 
-                console.log(`BOT ->${this.nameBot} | ChatId: ${chatId} | `,this.userStates[chatId]);
+                console.log(`BOT -> ${this.nameBot} | ChatId: ${chatId} | `,this.userStates[chatId]);
                 console.log('-----------------------------------');
 
                 if (currentNode.representante || currentNode.final) {
@@ -123,7 +117,14 @@ class Bot {
                 const newNode = this.conversationTree[this.userStates[chatId].state];
                 //Si el nodo tiene representante, enviar mensaje al representante
                 if (newNode.representante) {
-                    await this.client.sendMessage(this.representanteId, `📢 *Nueva solicitud de atención* 📢\n\nEnlace: https://wa.me/${chatId.replace('@c.us', '')}`);
+                     // Enviar notificación push al representante si tiene token
+                    if(this.token){
+                        this.sendPushNotification(this.token, 'Nueva solicitud de atención', `Enlace: https://wa.me/${chatId.replace('@c.us', '')}`);
+                    }
+                    else{
+                        await this.client.sendMessage(this.representanteId, `📢 *Nueva solicitud de atención* 📢\n\nEnlace: https://wa.me/${chatId.replace('@c.us', '')}`);
+                    }
+
                 }
 
                 let response = (noValid !== '' ?
@@ -260,6 +261,7 @@ class Bot {
         return {
             nameBot: this.nameBot,
             representanteId: this.representanteId,
+            token: this.token,
             usersAllowed: this.usersAllowed,
             usersDenied: this.usersDenied,
             userStates: this.userStates,
@@ -277,9 +279,31 @@ class Bot {
         this.usersDenied = usersDenied;
     }
 
+    setToken(token){
+        this.token = token;
+    }
+
     updateDT(){
         this.conversationTree = this.findDialogTree(this.nameBot);
     }
+
+    async sendPushNotification(token, title, body) {
+        const message = {
+            notification: {
+                title: title,
+                body: body
+            },
+            token: token
+        };
+
+        try {
+            const response = await admin.messaging().send(message);
+            console.log('Successfully sent push notification:', response);
+        } catch (error) {
+            console.error('Error sending push notification:', error);
+        }
+    }
+
 }
 
 export default Bot;

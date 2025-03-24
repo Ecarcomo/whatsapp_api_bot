@@ -107,13 +107,14 @@ app.get('/infoBot', (req, res) => {
     }
 });
 
-//ejemplo: http://localhost:3030/modBot?nameBot=electrovision&representanteId=5491137658523@c.us&usuariosPermitidos=5551642209,1137658523,1133727415
+//ejemplo: http://localhost:3030/modBot?nameBot=electrovision&representanteId=5491137658523@c.us&usuariosPermitidos=5551642209,1137658523,1133727415&token=1234567890
 app.get('/modBot', async (req, res) => {
     try {
         const nameBot = req.query.nameBot;
         const representanteId = req.query.representanteId;
         const usuariosPermitidos = req.query.usuariosPermitidos ? req.query.usuariosPermitidos.split(',') : [];
         const usuariosExceptuados = req.query.usuariosExceptuados ? req.query.usuariosExceptuados.split(',') : [];
+        const token = req.query.token;
         if (!nameBot ) {
             return res.status(400).send('Missing nameBot');
         }
@@ -121,15 +122,30 @@ app.get('/modBot', async (req, res) => {
         if (!bot) {
             return res.status(400).send('Bot not found');
         }
-        bot.setRepresentanteId(representanteId);
-        bot.setUsersAllowed(usuariosPermitidos);
-        bot.setUsersDenied(usuariosExceptuados);
+
+        if (!representanteId && !usuariosPermitidos && !usuariosExceptuados && !token) {
+            return res.status(400).send('Any parameter to modify');
+        }
+        if (representanteId) {
+            bot.setRepresentanteId(representanteId);
+        }
+        if (usuariosPermitidos) {
+            bot.setUsersAllowed(usuariosPermitidos);
+        }
+        if (usuariosExceptuados) {
+            bot.setUsersDenied(usuariosExceptuados);
+        }
+        if (token) {
+            bot.setToken(token);
+        }
         res.status(200).send('Bot modified successfully');
     } catch (error) {
         res.status(500).send(`Error modifying bot: ${error.message}`);
     }
 }
 );
+
+
 
 //ejemplo: http://localhost:3030/updateDT?nameBot=electrovision
 app.get('/updateDT', async (req, res) => {
